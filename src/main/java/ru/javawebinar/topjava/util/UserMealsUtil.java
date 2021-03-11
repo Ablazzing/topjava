@@ -59,25 +59,30 @@ public class UserMealsUtil {
 
     public static List<UserMealWithExcess> filteredByStreams(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
 
-        //Создаем мап для хранения потребления калорий по дням
-        Map<LocalDate, Integer> mapCaloriesPerDay = new HashMap<>();
+        //Итоговый список UserMealWithExcess
+        List<UserMealWithExcess> result = new ArrayList<>();
 
-        //Проходим по meals, заполняем мап по каждому дню
-        meals.stream().collect(Collectors.groupingBy(el -> el.getDateTime().toLocalDate()))
-                .entrySet().forEach((entry) -> {
-            Integer countCalories = entry.getValue().stream().map(e -> e.getCalories()).reduce((acc, e) -> acc + e).get();
-            mapCaloriesPerDay.put(entry.getKey(), countCalories);
-        });
+        meals.stream()
+                //Создаем stream по meals,группируем по дням
+                .collect(Collectors.groupingBy(el -> el.getDateTime().toLocalDate()))
+                .entrySet().stream()
+                //Проходим по каждому дню сформированной map
+                .map((entry) -> {
+                    //Считаем потребленные калории за день
+                    Integer countCalories = entry.getValue().stream().map(e -> e.getCalories()).reduce((acc, e) -> acc + e).get();
+                    //Возвращаем UserMealWithExcess
+                    return meals.stream()
+                        // Фильтруем приемы пищи по часам, за выбранный день
+                        .filter(e -> {
+                            LocalTime mealTime = e.getDateTime().toLocalTime();
+                            LocalDate mealDate = e.getDateTime().toLocalDate();
+                            return TimeUtil.isBetweenHalfOpen(mealTime, startTime, endTime)&&mealDate.equals(entry.getKey()); })
+                        //Создаем новые объекты UserMealWithExcess из отфильтрованных приемов пищи
+                        .map(e -> new UserMealWithExcess(e.getDateTime(), e.getDescription(), e.getCalories(), countCalories > caloriesPerDay))
+                        .collect(Collectors.toList());})
+                //Заполняем итоговый список UserMealWithExcess
+                .forEach(result::addAll);
 
-        //Фильтруем meals по часам, и создаем новые объекты UserMealWithExcess
-        return meals.stream().filter(e -> {
-            LocalTime mealTime = e.getDateTime().toLocalTime();
-            return TimeUtil.isBetweenHalfOpen(mealTime, startTime, endTime);
-        }).map(e -> {
-            LocalDate mealDate = e.getDateTime().toLocalDate();
-            return new UserMealWithExcess(e.getDateTime(), e.getDescription(), e.getCalories(), mapCaloriesPerDay.get(mealDate) > caloriesPerDay);
-        }).collect(Collectors.toList());
-
-
+        return result;
     }
 }
