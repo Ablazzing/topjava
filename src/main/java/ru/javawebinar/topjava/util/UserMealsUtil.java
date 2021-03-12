@@ -59,30 +59,19 @@ public class UserMealsUtil {
 
     public static List<UserMealWithExcess> filteredByStreams(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
 
-        //Итоговый список UserMealWithExcess
-        List<UserMealWithExcess> result = new ArrayList<>();
-
-        meals.stream()
+      return  meals.stream()
                 //Создаем stream по meals,группируем по дням
                 .collect(Collectors.groupingBy(el -> el.getDateTime().toLocalDate()))
                 .entrySet().stream()
                 //Проходим по каждому дню сформированной map
-                .map((entry) -> {
-                    //Считаем потребленные калории за день
-                    Integer countCalories = entry.getValue().stream().map(e -> e.getCalories()).reduce((acc, e) -> acc + e).get();
-                    //Возвращаем UserMealWithExcess
-                    return meals.stream()
-                        // Фильтруем приемы пищи по часам, за выбранный день
-                        .filter(e -> {
-                            LocalTime mealTime = e.getDateTime().toLocalTime();
-                            LocalDate mealDate = e.getDateTime().toLocalDate();
-                            return TimeUtil.isBetweenHalfOpen(mealTime, startTime, endTime)&&mealDate.equals(entry.getKey()); })
-                        //Создаем новые объекты UserMealWithExcess из отфильтрованных приемов пищи
-                        .map(e -> new UserMealWithExcess(e.getDateTime(), e.getDescription(), e.getCalories(), countCalories > caloriesPerDay))
-                        .collect(Collectors.toList());})
-                //Заполняем итоговый список UserMealWithExcess
-                .forEach(result::addAll);
-
-        return result;
+                .flatMap((entry) -> {
+                    //Превышает ли потребление калорий за день
+                    Boolean isExceed = entry.getValue().stream().map(e -> e.getCalories()).reduce((acc, e) -> acc + e).get()>2000;
+                    //Фильтруем по времени, возвращаем объекты UserMealWithExcess
+                    return entry.getValue().stream()
+                            .filter(e->TimeUtil.isBetweenHalfOpen(e.getDateTime().toLocalTime(), startTime, endTime))
+                            .map(e->new UserMealWithExcess(e.getDateTime(), e.getDescription(), e.getCalories(),isExceed)) ;})
+                //Возвращаем список
+                .collect(Collectors.toList());
     }
 }
