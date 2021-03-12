@@ -66,7 +66,7 @@ public class UserMealsUtil {
                 //Проходим по каждому дню сформированной map
                 .flatMap((entry) -> {
                     //Превышает ли потребление калорий за день
-                    Boolean isExceed = entry.getValue().stream().map(e -> e.getCalories()).reduce((acc, e) -> acc + e).get()>2000;
+                    boolean isExceed = entry.getValue().stream().map(e -> e.getCalories()).reduce((acc, e) -> acc + e).get()>2000;
                     //Фильтруем по времени, возвращаем объекты UserMealWithExcess
                     return entry.getValue().stream()
                             .filter(e->TimeUtil.isBetweenHalfOpen(e.getDateTime().toLocalTime(), startTime, endTime))
