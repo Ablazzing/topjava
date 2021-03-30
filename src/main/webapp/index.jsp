@@ -1,3 +1,4 @@
+<%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +9,7 @@
 <hr>
 <ul>
     <li><a href="users">Users</a></li>
-    <li><a href="meals">Meals</a></li>
+    <li><a href="meals?action=meals" />Meals</a></li>
 </ul>
 </body>
 </html>
