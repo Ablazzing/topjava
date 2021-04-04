@@ -11,26 +11,30 @@ public class Meal {
 
     private final String description;
 
-    private final int calories;
+    private Integer calories;
 
-    private final static AtomicInteger count = new AtomicInteger();
-
-    private final int idMeal;
+    private Integer id;
 
     public Meal(LocalDateTime dateTime, String description, int calories) {
-        this.idMeal = count.incrementAndGet();
+        this.id = null;
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
     }
 
-    public int getIdMeal() {
-        return idMeal;
+    public Meal(Integer id, LocalDateTime dateTime, String description, int calories) {
+        this.id = id;
+        this.dateTime = dateTime;
+        this.description = description;
+        this.calories = calories;
     }
 
-    public String getDateTimeJspFormat(){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        return getDateTime().format(formatter);
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public LocalDateTime getDateTime() {
@@ -41,7 +45,7 @@ public class Meal {
         return description;
     }
 
-    public int getCalories() {
+    public Integer getCalories() {
         return calories;
     }
 

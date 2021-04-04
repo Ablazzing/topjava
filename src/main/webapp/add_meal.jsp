@@ -2,6 +2,30 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@page import="java.time.LocalDate"%>
+<%@page import="ru.javawebinar.topjava.model.Meal"%>
+<%@page import="ru.javawebinar.topjava.util.MealsUtil"%>
+
+<%
+    String desc = "";
+    String calories ="";
+    String id ="";
+    String datetimes="";
+
+    if(request.getAttribute ("meal")!=null){
+        Meal meal =(Meal) request.getAttribute ("meal");
+        id =meal.getId().toString();
+        calories =  meal.getCalories().toString();
+        datetimes = MealsUtil.getDateTimeJspFormat(meal.getDateTime());
+        desc = meal.getDescription();
+    };
+
+    request.setAttribute("id",id);
+    request.setAttribute("desc",desc);
+    request.setAttribute("calories",calories);
+    request.setAttribute("datetimes",datetimes);
+%>
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -27,30 +51,30 @@
         });
     </script>
 
-    <title>Add new meal</title>
+    <title>${requestScope.type} meal</title>
 </head>
 
 <body>
     <div class="container ml-1 mt-1 mr-5">
-        <h3 class="text-success">Add meal page</h3>
-                    <form method="POST" action='meals?action=create' name="frmAddMeal">
+        <h3 class="text-success">${requestScope.type} meal page</h3>
+                    <form method="POST" action="meals?action=create&id=${requestScope.id}" name="frmAddMeal">
                         <div class="form-group">
                             <label for="description">Description :</label>
-                            <input class="form-control" type="text" name="description" id="description"/>
+                            <input class="form-control" type="text" name="description" id="description" value="${requestScope.desc}"/>
                         </div>
                         <div class="form-group">
                             <label for="calories">Calories : </label>
-                            <input class="form-control" type="text" name="calories" id="calories"/>
+                            <input class="form-control" type="text" name="calories" id="calories" value="${requestScope.calories}"/>
                         </div>
                         <div class="container m-0 mb-3 p-0 form-group">
                             <div class="row">
                                 <div class="col">
                                     <label for="datetimepicker1">Datetime : </label>
-                                    <input class="form-control" type="text" name="datetime" id="datetimepicker1" />
+                                    <input class="form-control" type="text" name="datetime" id="datetimepicker1" value="${requestScope.datetimes}"/>
                                 </div>
                             </div>
                         </div>
-                            <button type="submit" class="btn w-100 text-uppercase font-weight-bold h4 btn-primary">Add meal</button>
+                            <button type="submit" class="btn w-100 text-uppercase font-weight-bold h4 btn-primary">${requestScope.type} meal</button>
                     </form>
     </div>
 </body>

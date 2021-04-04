@@ -9,37 +9,28 @@ public class MealTo {
 
     private final String description;
 
-    private final int calories;
+    private final Integer calories;
 
-    private final int idMeal;
+    private final Integer id;
 //    private final AtomicBoolean excess;      // or Boolean[1],  filteredByAtomic
 //    private final Boolean excess;            // filteredByReflection
 //    private final Supplier<Boolean> excess;  // filteredByClosure
     private boolean excess;
 
-    public MealTo(int idMeal, LocalDateTime dateTime, String description, int calories, boolean excess) {
-        this.idMeal = idMeal;
+    public MealTo(int id, LocalDateTime dateTime, String description, int calories, boolean excess) {
+        this.id = id;
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
         this.excess = excess;
     }
 
-    public int getIdMeal() {
-        return idMeal;
+    public Integer getId() {
+        return id;
     }
-//    public Boolean getExcess() {
-//        return excess.get();
-//    }
-
 
     public LocalDateTime getDateTime() {
         return dateTime;
-    }
-
-    public String getDateTimeJspFormat(){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        return getDateTime().format(formatter);
     }
 
     public String getDescription() {

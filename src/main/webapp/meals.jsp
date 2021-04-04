@@ -2,6 +2,7 @@
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="ru.javawebinar.topjava.model.MealTo"%>
+<%@page import="ru.javawebinar.topjava.util.MealsUtil"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <link rel="stylesheet" href="bootstrap.min.css">
 
@@ -24,12 +25,16 @@
             <c:forEach var="meal" items="${requestScope.meals}">
                  <tr scope="row" class="<c:out value="${meal.isExcess() ? 'text-danger' : 'text-success'}"></c:out>">
                             <td><c:out value="${meal.getDescription()}"></c:out></td>
-                            <td><c:out value="${meal.getDateTimeJspFormat()}"></c:out></td>
+                            <td><c:out value="${MealsUtil.getDateTimeJspFormat(meal.getDateTime())}"></c:out></td>
                             <td>
                                 <c:out value="${meal.getCalories().toString()}"></c:out>
                             </td>
-                            <td><a class="btn text-uppercase font-weight-bold btn-warning" href="meals?action=edit_meal&idMeal=${meal.getIdMeal()}">edit</a></td>
-                            <td><a class="btn text-uppercase font-weight-bold btn-danger" href="meals?action=delete_meal&idMeal=${meal.getIdMeal()}">delete</a></td>
+                            <td><a class="btn text-uppercase font-weight-bold btn-warning" href="meals?action=edit_meal&id=${meal.getId()}">edit</a></td>
+                            <td>
+                            <form method="POST" action='meals?action=delete_meal&id=${meal.getId()}' name="frmAddMeal">
+                                <button class="btn text-uppercase font-weight-bold btn-danger" type="submit">delete</button>
+                            </form>
+                            </td>
 
                  </tr>
             </c:forEach>

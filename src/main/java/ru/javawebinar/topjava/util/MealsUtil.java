@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
@@ -22,7 +23,7 @@ import static ru.javawebinar.topjava.util.TimeUtil.isBetweenHalfOpen;
 
 public class MealsUtil {
     public static final int LIMIT_CALORIES = 2000;
-    public static final List<Meal> MEALS = Collections.synchronizedList( new ArrayList<>(  Arrays.asList(
+    public static final List<Meal> MEALS = Collections.synchronizedList(new ArrayList<>(Arrays.asList(
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500),
@@ -31,6 +32,7 @@ public class MealsUtil {
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
     )));
+    public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
 
     public static void main(String[] args) throws InterruptedException {
@@ -78,6 +80,11 @@ public class MealsUtil {
                 .collect(Collectors.toList());
     }
 
+    public static String getDateTimeJspFormat(LocalDateTime localDateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        return localDateTime.format(formatter);
+    }
+
     public static List<MealTo> filteredByCycles(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
 
         final Map<LocalDate, Integer> caloriesSumByDate = new HashMap<>();
@@ -92,34 +99,6 @@ public class MealsUtil {
         return mealsTo;
     }
 
-    public static void changeMealById(int idMeal,Meal meal){
-        for (int i = 0; i < MEALS.size(); i++) {
-            if (MEALS.get(i).getIdMeal()==idMeal){
-                MEALS.set(i,meal);
-                break;
-            }
-        }
-
-    }
-
-
-    public static void deleteById(int idMeal){
-        for (int i = 0; i < MEALS.size(); i++) {
-            if (MEALS.get(i).getIdMeal()==idMeal){
-                MEALS.remove(i);
-                break;
-            }
-        }
-    }
-
-    public static Meal findById(int idMeal){
-        for (int i = 0; i < MEALS.size(); i++) {
-            if (MEALS.get(i).getIdMeal()==idMeal){
-                return MEALS.get(i);
-            }
-        }
-        return null;
-    }
 
     private static List<MealTo> filteredByRecursion(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         ArrayList<MealTo> result = new ArrayList<>();
@@ -380,6 +359,6 @@ public class MealsUtil {
     }
 
     private static MealTo createTo(Meal meal, boolean excess) {
-        return new MealTo(meal.getIdMeal(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
+        return new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
     }
 }
